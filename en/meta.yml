@@ -1,6 +1,6 @@
-title: cd-intermediate-python-sushi
+title: Intermediate Python Sushi Cards
 hero_image: images/banner.png
-description: cd-intermediate-python-sushi description
+description: Build on your Python skills by making a quiz creator
 version: 4
 listed: false
 copyedit: false
@@ -8,4 +8,10 @@ last_tested: "2018-06-06"
 steps:
   - title: Introduction
   - title: What you will need
-  - title: Step title
+  - title: Setting up Virtual Environments and installing libraries
+  - title: Getting the user's questions
+  - title: Saving the quiz
+  - title: Loading the quizzes
+  - title: Displaying the questions
+  - title: Showing the score
+  - title: Wrapping up
