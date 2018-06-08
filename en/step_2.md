@@ -4,7 +4,7 @@
 
 + Python 3
 
-+ A text editor such as [atom](http://atom.io)
++ A text editor such as [atom](http://atom.io){:target="blank"}
 
 ### Before you start
 
