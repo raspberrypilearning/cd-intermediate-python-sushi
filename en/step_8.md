@@ -1,44 +1,44 @@
-## Showing the score
+## Wrapping up
 
-You’re on the last step now. You have created a program to make quizzes, you can select the quiz you want to play and you can show the question and the answers. Now the only thing left to do is to keep score.
+Phew! It's done, you completed it, well done!
 
-+ Firstly create a new variable `score` near the top of your code. Set `score` to `0`.
++ Try it out now. Create some quizzes with the creator program and then play them. Maybe get together with some friends and do a quiz together. You could see who can get the highest scores!
 
-+ Inside the `selectedCorrectAnswer` function you are going to need to access the score variable, to increase it. This should be done before the `showNewQuestion` function is called. Type:
-```python
-global score
-```
+With all the new things you have learned now, you can do so much! Here are a couple of ideas, but I’m sure you could you think of better ones.
 
-  **Remember:** Since `score` is a **global** variable it can be accessed anywhere, but we need to **tell** python to use it.
+--- collapse ---
+---
+title: Make the quiz editable
+---
 
-+ Then just increase the score by one:
-```python
-score += 1
-```
+It would be cool, if you could edit quizzes with the quiz creator programme. Then you could come back and add more questions. If you load the data with the json library into python, then you could add more questions. You’d just have to replace everything in the file when you save it again.
 
-+ Perfect! Now you just need somewhere to display this score. Go ahead and create a new screen called **scoreScreen**. Remember to hide it!
+--- /collapse ---
 
-+ Right! Now add a title and also a **PushButton**. Give the button a text of “Finished!” and a function `resetProgram`.
+--- collapse ---
+---
+title: Use quizzes from the internet
+---
 
-+ Once all the questions have been answered you should show this screen. Go back to the `showNewQuestion` function and add an `if` statement at the very beginning to test whether the current index (the amount of questions you have already asked) is equal to the total amount of questions.
-```python
-if(index == len(quizQuestions["questions"])):
-```
+Or how about trying to get quizzes from online. There are lots of great quiz sites, some of which even provide JSON data of their quizzes!
 
-+ If so hide the playQuizScreen and show the scoreScreen!
+--- /collapse ---
 
-+ One more thing: you need to setup a **Text element** for the score. Do this inside your `if` statment. Since you are combining a number with a string, you’ll need to use the `str()` function around the `score` variable.
-```python
-“Score: ” + str(score)
-```
+--- collapse ---
+---
+title: Keep track of high scores
+---
 
-+ Surround the previous code in that function in an `else` statement
+How about you try setting up a scoreboard. It would be pretty cool, if you could keep a record of the highest scorer for a quiz. Then you could do competitions!
 
-+ Now for some final touches, you need to create the **resetProgram** function.
+--- /collapse ---
 
-+ First reset the score value. Remember to access it you have to type:
-```python
-global score
-```
+--- collapse ---
+---
+title: Make something else
+---
 
-+ Next hide the scoreScreen and show the selectQuizScreen!
+With all your new skills though you could do something completely different. You could build a game with guizero, or maybe use JSON data to show the weather!
+
+--- /collapse ---
+

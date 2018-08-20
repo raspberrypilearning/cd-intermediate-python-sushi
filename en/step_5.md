@@ -1,84 +1,94 @@
-## Saving the quiz
+## Loading the quizzes
 
-Amazing! Now that you have all your questions you need somewhere to save them.
+Now that you have that shiny, cool, new quiz you need somewhere to play it! Switch over to the second file.
 
-First you need to get the user to say what the quiz should be called.
-+ Add another **Text** and **TextBox** (call it `quizNameInput`) element.
++  First you’ll need to import some libraries: **guizero** and **json**.
 
++  Great! Now just setup the app variable again, like the last time!
 
-+ Underneath, add a **PushButton** element. For its function type `saveQuiz`.
+For this program to work you are going to need multiple **screens**. The screen where you select the quiz, the screen where you see the questions, and the score screen.
 
-+  Great! Now onto making that function. Go right ahead and set it up.
-
---- hints ---
-
---- hint ---
-
---- /hint ---
-
---- /hints ---
-
-You are going to save the information in a format called **JSON**. With JSON you have keys and values. A value is given to a key, and when you want that value back you give json the key. This allows for your data to be saved and read easily. It looks like this:
-
-![](images/json.png)
-
-+ Python has a built in JSON library (called `json`), so go ahead and import that:
++ To create screens with guizero you can use the **Box** element. Create your first Box called **selectQuizScreen**. Again, do this above the line `app.display()`
 
 ```python
-import json
+selectQuizScreen = guizero.Box(app)
 ```
 
-You are going to store this json data in a file, but first you need a file name. You'll get this in the `saveQuiz` function. 
+Now how about adding some elements! A title would be nice. This is exactly the same as on your previous program, except instead of **app** being the master you should pass in **selectQuizScreen**.
 
-+ You need to get the user's input and then add `.json` to that, so the computer knows what file type it is.
-
++ Add this code give the screen a title.
 ```python
-fileName = quizNameInput.value + “.json”
+guizero.Text(selectQuizScreen, text="Play a quiz", size=25)
 ```
 
-Now you need to create this file. Thankfully Python can do that easily! It has a built-in function named open for files. This has multiple options like **r - Read**, **a - Append**, **w - Write**, but since you need to create the file, **w+** is the best.
+Now, you need a way of showing the user which quizzes are available. How about having a button for each quiz?
 
-+ Add the following code
++ To do this, you’ll need to know what json files are there. This is actually really easy thanks to the **glob** library. Go ahead and import it.
+
++ Type in:
+
 ```python
-with open(fileName, “w+”) as file:
+quizzes = glob.glob(“*.json”)
+```
+  By saying **\*.json** you ask glob to scan your current directory(folder) you all files that end with .json. It won’t look in any other folders though.
+
++ Now you want a button for each file, so you are going to have to loop through the list. For this you can use a **for loop**:
+```python
+for quiz in quizzes:
     #Indented code
+```
+
+Next, you’re going to need to the name of the quiz. You can use the **split** method again for this. 
+
++ Split the file’s name at ".json", and assign store the first item of the resulting list in a variable:
+
+```python
+buttonText = quiz.split(".json")[0]
+```
+
++ Now just tell guizero to create the button
+
+```python
+guizero.PushButton(selectQuizScreen, playQuiz, args=[quiz], text=buttonText)
 ```
 
 --- collapse ---
 ---
-title: What's 'with' this code?
+title: What is the 'args' bit?
 ---
 
-Notice that you used `with`. 
+You are now passing an extra thing into the PushButton: `args=`. Anything in here will get sent to the function when the button is clicked. 
 
-In python after you open a file, it needs to be closed. 
-
-By using `with`, Python will automatically close it for you. This works like a function: once you unindent you will leave it and close the file.
+You want the quiz that was clicked to be sent, so you say `args=[quiz]`.
 
 --- /collapse ---
 
-+ If you are going to be writing some JSON data, you first need to get it! You can use the `json` library to turn your questions list into JSON.
++ Since you are passing something to the function, you need to setup the function differently:
 
 ```python
-jsonData = json.dumps(questions)
+def playQuiz(file):
 ```
+  When this function is called, `file` will contain the quiz you want to play. The things that get passed to functions are called **parameters**.
 
-+ Great! Now you need to write it to the file:
++ Inside the function, open up the quiz file
 
 ```python
-file.write('{"questions":' + jsonData + '}')
+with open(file, “r”) as file:
 ```
 
-  All JSON data is first surrounded by parenthesis({), then you define the key(which is “questions”), add the json data, and finally close the parenthesis.
-
-+ Perfect! Just unindent you code so the file can close!
-
-+ The last thing to do would be to clear all of the TextBoxs, since you don’t need what’s in them anymore. This can be done like this:
++ Now from this file, you need to get all the questions. You can use the json library again for this:
 
 ```python
-newQuestion.value = ""
+quizQuestions = json.loads(file.read())
+```
+ This tells json to load everything in that file, and put it into the variable **quizQuestions**
+
+Amazing! Now you can choose a quiz and you can get all the questions. 
+
++ How about you try out the program? Add this line to test it:
+
+```python
+print(quizQuestions)
 ```
 
-+ Try it for the other 3 **TextBoxes**!
-
-+ Brilliant! You now have a quiz generator. Try playing around with it and making up some quizzes.
+**Note:** Testing code is great, but you need to remember to get rid of the extra line when your done. You don’t want a file filled with `print`s!

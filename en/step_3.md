@@ -1,52 +1,161 @@
-## Setting up Virtual Environments and installing libraries
+## Getting the user's questions
 
-One of the coolest things about Python is all the libraries available for i. A library is a piece of code that someone has already written. You can then use their code in your own programs. This allows you to do some cool stuff like send tweets or display images!
+First, you are going to need a set of questions and answers. So you will need to build a quiz creator. It would look nice if it used a **GUI**. A GUI is a way of controlling programs visually. Most programs like text editors, your browser, etc use a GUI. 
 
-There are a ton of libraries available for Python, so if you ever want to do something it is always good to look at what libraries are available. They can save you loads of time!
++ You’re going to use the **guizero** library to create your own GUI. To do this you’ll need to import this library:
 
-In order for you to install libraries, you are going to use a tool called **pip**. Pip is a **package manager** and allows for you to install and update your libraries.
-
-+ Open the command line on your computer and type in
-```bash
-pip install virtualenvwrapper
+```python
+import guizero
 ```
-Note: To open the command line search for the **command prompt** on Windows or the **Terminal** on Linux or macOS.
 
-+ Great! Once that has downloaded you are going to create a **virtual environment** for your programs to run in.
+This tells python to import the features of the guizero library so you can make a GUI.
 
-```bash
-mkvirtualenv -p python3 intermediate-sushi
++ The first step is to make the actual window:
+
+```python
+app = guizero.App(title="Quiz Creator")
+```
+
++ Of course, you need to be able to see this! So tell it to display itself
+
+```python
+app.display()
+```
+
++ Now run this script to see your first application.
+
+--- hints ---
+
+--- hint ---
+
++ Type `python quizCreator.py` in the command line to run the progra,.
+
+--- /hint ---
+
+--- /hints ---
+  
+The first thing you need is a title. To make this you are going to need a **Text** element.
+
++ You can create one by typing this line above `app.display()`:
+
+```python
+guizero.Text(app, text=”Create a quiz!”, size=25)
 ```
 
 --- collapse ---
 ---
-title: What's a virtual environment and why do I need one?
+title: How does the code work?
 ---
 
-Sometimes libraries can get annoying, especially if you have a lot of them!
+This gets a new **Text** element from guizero. 
 
-For example: Say you write a game which needs the **pygame** library (a library which helps you create video games). A few months later you write another game which also uses **pygame**, but it has just been updated. So you update **pygame** and make your new game. But when you go back to your old game, it is now broken!
-
-This is a common situation, and is caused because libraries change from version to version. This means that code that used to work won’t anymore! Instead you should give specific programs specific versions of the libraries.
-
-To do this, create **virtual environments**. This will mean that each of your programs will have their own copy of the library, which will only change when you’re working on that particular program. So none of your programs will ever have the wrong libraries.
-
-The **virtualenvwrapper** tool makes this simple for you to do. 
++ Notice that you pass it `app`. This is because `app` is the container element that the **Text** element is being placed inside of. So your Text needs to belong to `app`.
 
 --- /collapse ---
 
-+ Finally you need to go into that virtual environment. To do this just run:
+Great! Now to make a quiz you need questions, and questions have three parts: The actual question, the correct answer, and some incorrect answers.
 
-```bash
-workon intermediate-sushi
++ First ask the user for the question. For this you will need a **Text** and a **TextBox** element:
+
+```python
+guizero.Text(app, text="What is the question?")
+newQuestion = guizero.TextBox(app)
 ```
-  **Note:** Everytime you want to work on these sushi cards, you’ll need to run this command.
+**Note:** You assign a variable to the TextBox so that you can access its value later
 
-Perfect! Now that you are inside this virtual environment you can install the library that you need. You want the `guizero` library, which will make designing programs a breeze! 
++ Repeat this for the correct answer (call its **TextBox** `correctAnswerInput`) and the incorrect answers (call its **TextBox** `incorrectAnswersInput`).
 
-+ To do this just run:
++ Great! Now you should add a button. For this you will use the **PushButton** element. It needs three things: its master(app), the text, but also a function to call when it is pressed.
 
-```bash
-pip install guizero
+  ```python
+  guizero.PushButton(app, addQuestion, text="Add question")
+  ```
+
+--- collapse ---
+---
+title: What is a function?
+---
+
+Often when you write code, you'll want to define a bunch of lines of code that together make up one 'action'.
+
+You do this by defining a **function** and giving it a name. 
+
+Having code in a function lets you reuse the same bit of code lots of times without having to write it all out each time. All you have to do to run the code inside a function is to **call** the function using its name.
+
+--- /collapse ---
+
++ Now you just need to add the `addQuestion` function. This needs to go above the button's code. In Python you can create functions using the `def` keyword
+
+```python
+def addQuestion():
 ```
 
+**Note:** One thing to always remember is that all code inside a function needs to be indented
+
+```python
+def addQuestion():
+    #I’m indented code
+#I am not indented code
+```
+
+Perfect! Ok so now you need to get all the information. You’re going to be storing it like this:
+
+```JSON
+{"question": "What is the Capital of Ireland", "correct_answer": "Dublin", "incorrect_answers": ["Madrid", "Paris", "Kiev"]}
+```
+
++ The first thing you need to do is split up the incorrect answers. At the moment they are all together as one **String**, instead they should be a **List** of strings, as shown above.
+
+```python
+otherAnswers = incorrectAnswersInput.value.split(“,”)
+```
+
+This will split the text in `incorrectAnswersInput` every time it sees a `,`, and give you back all the separated strings as a list.
+
+--- collapse ---
+---
+title: Top tip for testing your code!
+---
+
+Sometimes I like to make sure my code is working. Try adding the following line and seeing the result
+
+```python
+print(otherAnswers)
+```
+
+--- /collapse ---
+
+Cool! Now it’s time to collect all the question information. 
+
++ Create a new variable, called `questionToAdd`, and have it equal the following:
+
+```python
+questionToAdd = {“question”: newQuestion.value, “correct_answer”: correctAnswerInput.value, “incorrect_answers”: otherAnswers}
+```
+
+--- collapse ---
+---
+title: What is happening in this code?
+---
+
+What you are doing here is creating a **dictionary**. 
+
+This is like an **list** except for every value you set a **key**. 
+
+For example you set the **key** “correct_answer” for the correct answer.
+
+--- /collapse ---
+
+Ok, now you just need to store this somewhere. You are going to store it in another variable. 
+
++ At the top of your code type, underneath the import, type:
+
+```python
+questions = []
+```
+
++ The last thing to do is add your dictionary to the list
+
+```python
+questions.append(questionToAdd)
+```

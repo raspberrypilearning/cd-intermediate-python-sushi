@@ -7,7 +7,6 @@ copyedit: false
 last_tested: "2018-06-06"
 steps:
   - title: Introduction
-  - title: What you will need
   - title: Setting up Virtual Environments and installing libraries
   - title: Getting the user's questions
   - title: Saving the quiz

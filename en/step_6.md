@@ -1,94 +1,117 @@
-## Loading the quizzes
+## Displaying the questions
 
-Now that you have that shiny, cool, new quiz you need somewhere to play it! Switch over to the second file.
+You’re now going to create your second screen. 
 
-+  First you’ll need to import some libraries: **guizero** and **json**.
++ Down near the bottom create a new Box called **playQuizScreen**
 
-+  Great! Now just setup the app variable again, like the last time!
-
-For this program to work you are going to need multiple **screens**. The screen where you select the quiz, the screen where you see the questions, and the score screen.
-
-+ To create screens with guizero you can use the **Box** element. Create your first Box called **selectQuizScreen**. Again, do this above the line `app.display()`
++ At the start this screen should be hidden so you can write:
 
 ```python
-selectQuizScreen = guizero.Box(app)
+playQuizScreen.hide()
 ```
 
-Now how about adding some elements! A title would be nice. This is exactly the same as on your previous program, except instead of **app** being the master you should pass in **selectQuizScreen**.
++ You should also add a title. Do you remember how to do this? Look at the code for the first screen if you don’t!
 
-+ Add this code give the screen a title.
-```python
-guizero.Text(selectQuizScreen, text="Play a quiz", size=25)
-```
+On this screen you are going to be adding and deleting elements every time a question is shown.
 
-Now, you need a way of showing the user which quizzes are available. How about having a button for each quiz?
-
-+ To do this, you’ll need to know what json files are there. This is actually really easy thanks to the **glob** library. Go ahead and import it.
-
-+ Type in:
++ To make this easy, create another **Box** called questionBox:
 
 ```python
-quizzes = glob.glob(“*.json”)
-```
-  By saying **\*.json** you ask glob to scan your current directory(folder) you all files that end with .json. It won’t look in any other folders though.
-
-+ Now you want a button for each file, so you are going to have to loop through the list. For this you can use a **for loop**:
-```python
-for quiz in quizzes:
-    #Indented code
+questionBox = guizero.Box(playQuizScreen)
 ```
 
-Next, you’re going to need to the name of the quiz. You can use the **split** method again for this. 
+Perfect! Now that you have your new screen you’re going to need to show it when the user selects a quiz.
 
-+ Split the file’s name at ".json", and assign store the first item of the resulting list in a variable:
++ Go back to the `playQuiz` function and add in
 
 ```python
-buttonText = quiz.split(".json")[0]
+selectQuizScreen.hide()
+playQuizScreen.show()
 ```
 
-+ Now just tell guizero to create the button
++ Go ahead and test out the program now. See can you select a quiz and change the screen. You’ll notice that there are no questions! That’s what you are going to do next.
+
++ Create a new function `showNewQuestion`. This needs two **parameters**: the list of questions and the index (position) of the current question.
 
 ```python
-guizero.PushButton(selectQuizScreen, playQuiz, args=[quiz], text=buttonText)
+def showNewQuestion(quizQuestions, index):
 ```
 
---- collapse ---
----
-title: What is the 'args' bit?
----
-
-You are now passing an extra thing into the PushButton: `args=`. Anything in here will get sent to the function when the button is clicked. 
-
-You want the quiz that was clicked to be sent, so you say `args=[quiz]`.
-
---- /collapse ---
-
-+ Since you are passing something to the function, you need to setup the function differently:
++ Now call this function from the `playQuiz` function.
 
 ```python
-def playQuiz(file):
+showNewQuestion(quizQuestions, 0)
 ```
-  When this function is called, `file` will contain the quiz you want to play. The things that get passed to functions are called **parameters**.
 
-+ Inside the function, open up the quiz file
+In this you first want to clear out the **questionBox** you made earlier. This requires a few things
+  * First: You need to access the **questionBox** variable. This variable was created outside of a function and so is a **global** variable. This means it can be accessed anywhere. To tell python to use it type:
+  ```python
+  global questionBox
+  ```
+  * Next you need you need to remove the old questionBox
+  ```python
+  questionBox.destroy()
+  ```
+  * Finally you need to create a new empty one
+  ```python
+  questionBox = guizero.Box(playQuizScreen)
+  ```
+
++ Next you want to get the current quiz question. Remember when you created the json data you gave it the key “questions”? Well to access that data you use that key again, along with the index of the question.
+```python
+currentQuestion = quizQuestions[“questions”][index]
+```
+
+Now you need to ask the player the question. 
+
++ Create a Text element with the text set to the question.
 
 ```python
-with open(file, “r”) as file:
+guizero.Text(questionBox, text=currentQuestion[“question”])
 ```
 
-+ Now from this file, you need to get all the questions. You can use the json library again for this:
+Perfect! You just need buttons now for all the answers. However, first you should think of which order they should be in. It would be cool if the order changed every time!
+
+To do this you will need an list containing all the answers. You already have a list of the incorrect answers, so you can just add the correct answer to this.
+
++ Using the `append` method you can add the correct answer to the list.
 
 ```python
-quizQuestions = json.loads(file.read())
+currentQuestion["incorrect_answers"].append(currentQuestion["correct_answer"])
 ```
- This tells json to load everything in that file, and put it into the variable **quizQuestions**
 
-Amazing! Now you can choose a quiz and you can get all the questions. 
-
-+ How about you try out the program? Add this line to test it:
++ Finally you want to randomize the order that the answers are in. To do this you’ll need to import the `random` library. Then you can use `shuffle` to well **shuffle** the list!
 
 ```python
-print(quizQuestions)
+random.shuffle(currentQuestion["incorrect_answers"])
 ```
 
-**Note:** Testing code is great, but you need to remember to get rid of the extra line when your done. You don’t want a file filled with `print`s!
+Ok, I know, a lot has been covered, but you’re nearly there. 
+
++ The last thing to do is add all these buttons. You’re going to use a **for loop** again.
+
+```python
+for answer in currentQuestion["incorrect_answers"]:
+```
+
+For this you are going to need to know if it's an incorrect answer you are adding or a correct answer. 
+
++ You can do this really simply by using **conditional expressions**
+```python
+functionToCall = selectedCorrectAnswer if answer == currentQuestion["correct_answer"] else showNewQuestion
+```
+
+  **Note:** You can say it at loud to understand it. The function to call **is** selectedCorrectAnswer **if** answer **is** the correct answer **else** the function **is** showNewQuestion
+
++ Now you need to create these buttons. Their arguments will be the quizQuestions and the new index
+
+```python
+guizero.PushButton(questionBox, functionToCall, args=[quizQuestions, index + 1], text=answer)
+```
+
++ Lastly (hooray!) you need to define the `selectedCorrectAnswer` function. Just have it call the `showNewQuestion` function for now.
+
+```python
+def selectedCorrectAnswer(quizQuestions, index):
+      showNewQuestion(quizQuestions, index)
+```
